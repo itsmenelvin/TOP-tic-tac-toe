@@ -110,10 +110,16 @@ button {
   font-family: 'Permanent Marker', cursive;
   letter-spacing: 1px;
   font-size: 1rem;
-  box-shadow: 0 0 10px 1px#881337;
+  box-shadow: 0 0 10px 1px var(--primary-rose);
 }
 
 button:hover {
   color: var(--primary-white);
   box-shadow: 0 0 10px 1px var(--primary-white);
+}
+
+.comboStyle {
+  background-color: var(--primary-stone);
+  color: var(--primary-rose);
+  box-shadow: 0 0 10px 1px#881337;
 }
