@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+
+:root {
+  --primary-rose: #881337;
+  --secondary-rose: #9f1239;
+
+  --primary-stone: #1c1917;
+  --secondary-stone: #292524;
+
+  --primary-white: #fff1f2;
+  --secondary-white: #e7e5e4;
+
+  font-family: 'Permanent Marker', cursive;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(
+    circle,
+    var(--primary-rose),
+    var(--secondary-stone),
+    var(--secondary-stone),
+    var(--primary-stone)
+  );
+}
+
+#game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
+}
+
+.game-title {
+  text-align: center;
+  color: var(--primary-white);
+  font-size: 4rem;
+}
+
+.gameboard-container {
+  display: grid;
+  height: 500px;
+  width: 500px;
+  opacity: 0.8;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 9rem;
+  background-color: var(--secondary-white);
+}
+
+/* Game Controller Buttons */
+.game-btns-wrapper {
+  display: grid;
+  height: 80px;
+  grid-template: repeat(2, 1fr) / repeat(4, 1fr);
+  grid-template-areas:
+    'new-game label label label'
+    'reset-game mode mode mode';
+  gap: 10px;
+  color: var(--secondary-white);
+}
+
+#new-game {
+  grid-area: new-game;
+}
+
+#reset-game {
+  grid-area: reset-game;
+}
+
+#mode {
+  grid-area: label;
+}
+
+#select-label {
+  grid-area: label;
+  justify-self: center;
+  align-self: center;
+}
+
+.mode {
+  justify-self: center;
+  align-self: center;
+  background-color: var(--primary-stone);
+  color: var(--primary-white);
+  padding: 0.5rem;
+  border-radius: 9px;
+  box-shadow: 0 0 10px 1px#881337;
+}
+
+button {
+  border: none;
+  background-color: var(--primary-stone);
+  color: var(--primary-rose);
+  font-family: 'Permanent Marker', cursive;
+  letter-spacing: 1px;
+  font-size: 1rem;
+  box-shadow: 0 0 10px 1px#881337;
+}
+
+button:hover {
+  color: var(--primary-white);
+  box-shadow: 0 0 10px 1px var(--primary-white);
+}
