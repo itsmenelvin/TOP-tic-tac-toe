@@ -1,32 +1,29 @@
 function ticTacToe() {
-  let playerOne = 'X';
-  let playerTwo = 'O';
-  let currentPlayer = playerOne;
+  const playerOne = 'X';
+  const playerTwo = 'O';
+  let defaultPlayer = playerOne;
   let foundWinner = false;
-  const gameboard = ['', '', '', '', '', '', '', '', ''];
+  let gameMode;
+  const gameBoard = ['', '', '', '', '', '', '', '', ''];
+  const functions = [];
   const cells = document.querySelectorAll('.cell');
   const resetButton = document.querySelector('#reset-game');
+  const newGameButton = document.querySelector('#new-game');
+  const options = Array.from(document.querySelectorAll('input[name="mode"]'));
 
   // Private Function
+  function switchPlayer() {
+    if (defaultPlayer === playerOne) {
+      defaultPlayer = playerTwo;
+    } else {
+      defaultPlayer = playerOne;
+    }
+  }
+
   function render() {
     cells.forEach((cell, index) => {
-      cell.textContent = gameboard[index];
+      cell.textContent = gameBoard[index];
     });
-  }
-
-  function switchPlayer() {
-    currentPlayer === playerOne
-      ? (currentPlayer = playerTwo)
-      : (currentPlayer = playerOne);
-  }
-
-  function play(index) {
-    if (foundWinner) return; //restrict from filling, if winner found/true
-    if (gameboard[index]) return; //restrict from filling, filled cells
-    gameboard[index] = currentPlayer;
-    switchPlayer();
-    render();
-    checkWinner();
   }
 
   function checkWinner() {
@@ -41,61 +38,105 @@ function ticTacToe() {
       [2, 4, 6],
     ];
 
-    winningCombination.forEach((currentCombination) => {
-      const [a, b, c] = currentCombination;
+    winningCombination.forEach((currComb) => {
+      const [a, b, c] = currComb;
       if (
-        gameboard[a] === playerOne &&
-        gameboard[b] === playerOne &&
-        gameboard[c] === playerOne
+        gameBoard[a] !== ''
+        && gameBoard[a] === gameBoard[b]
+        && gameBoard[b] === gameBoard[c]
       ) {
-        cells[a].classList.add('comboStyle');
-        cells[b].classList.add('comboStyle');
-        cells[c].classList.add('comboStyle');
-        foundWinner = true;
-      } else if (
-        gameboard[a] === playerTwo &&
-        gameboard[b] === playerTwo &&
-        gameboard[c] === playerTwo
-      ) {
-        cells[a].classList.add('comboStyle');
-        cells[b].classList.add('comboStyle');
-        cells[c].classList.add('comboStyle');
+        currComb.forEach((curr) => cells[curr].classList.add('comboStyle'));
         foundWinner = true;
       }
     });
   }
 
+  function play(index) {
+    if (gameBoard[index]) return; // restrict from filling, filled cells
+    if (foundWinner) return; // restrict from filling, if winner found/true
+    gameBoard[index] = defaultPlayer;
+    switchPlayer();
+    render();
+    checkWinner();
+  }
+
   function reset() {
-    for (let i = 0; i < gameboard.length; i++) {
-      gameboard[i] = '';
-    }
-    cells.forEach((cell) => {
-      cell.classList.remove('comboStyle');
-    });
+    defaultPlayer = playerOne;
     foundWinner = false;
+    cells.forEach((cell, index) => {
+      gameBoard[index] = '';
+      cell.classList.remove('comboStyle');
+      cell.removeEventListener('click', functions[index]);
+    });
     render();
   }
 
-  // Public Functions
+  function randomMove() {
+    if (defaultPlayer === playerOne) return;
+    // This function is gonna find an empty cell and filled it
+    for (let i = 0; i <= 8; i++) {
+      const randMove = Math.floor(Math.random() * 9);
+      if (gameBoard[randMove] === '') {
+        play(randMove);
+        i = 8;
+      }
+    }
+  }
+
+  // ### Game Mode ###
+  function vsHuman() {
+    cells.forEach((cell, index) => {
+      functions[index] = play;
+      // Assign the 'play' function to the corresponding index in the 'functions' array
+      // to enable removal of the function during the 'reset' function
+      cell.addEventListener('click', () => {
+        // Invoke the 'play' function with the 'index' argument,
+        // which corresponds to the clicked cell
+        if (gameMode === 'human') functions[index](index);
+      });
+    });
+  }
+
+  function vsEasyAi() {
+    functions.length = 0;
+    cells.forEach((cell, index) => {
+      functions[index] = [play, randomMove];
+      // Assign the 'play' and 'randomMove' functions to the
+      // corresponding index in the 'functions' array
+      cell.addEventListener('click', () => {
+        if (gameMode === 'easy-ai') {
+          // Invoke the 'play' function with the 'index' argument,
+          // which corresponds to the clicked cell
+          functions[index][0](index);
+          // Invoke the 'randomMove' function
+          functions[index][1]();
+        }
+      });
+    });
+  }
+
+  // Ai Hard
+
+  // Immediately Invoked Function Expression (IIFE)
+  (function () {
+    console.log(
+      "Don't forget to laugh and have fun while playing Tic Tac Toe! 🤣",
+    );
+    resetButton.addEventListener('click', reset);
+    newGameButton.addEventListener('click', () => {
+      reset();
+      [gameMode] = options
+        .filter((opt) => opt.checked)
+        .map((opt) => opt.id);
+      if (gameMode === 'human') vsHuman();
+      if (gameMode === 'easy-ai') vsEasyAi();
+      if (gameMode === 'hard-ai') { console.log('Ai Hard is not implemented yet...'); }
+    });
+  }());
+
   return {
-    play,
-    render,
     reset,
-    cells, //public variables
-    resetButton,
-    foundWinner,
   };
 }
 
-const game = ticTacToe(); // create a tictactoe object name "game"
-game.cells.forEach((cell) => {
-  //listen on cell and invoke play() function with index argument based on cell id
-  cell.addEventListener('click', () => {
-    const cellNumber = parseInt(cell.id);
-    game.play(cellNumber);
-  });
-});
-game.resetButton.addEventListener('click', () => {
-  // call reset() function if user click reset button
-  game.reset();
-});
+const game = ticTacToe();
